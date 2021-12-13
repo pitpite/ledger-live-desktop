@@ -53,6 +53,28 @@ const trackNoRates = ({ toState }) => {
   });
 };
 
+export const useProviders = () => {
+  const dispatch = useDispatch();
+  const { providers, error: providersError } = useSwapProviders();
+  const storedProviders = useSelector(providersSelector);
+
+  useEffect(() => {
+    if (providers) dispatch(updateProvidersAction(providers));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providers]);
+
+  useEffect(() => {
+    if (providersError) dispatch(resetSwapAction());
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [providersError]);
+
+  return {
+    storedProviders,
+    providers,
+    providersError,
+  };
+};
+
 const SwapForm = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
