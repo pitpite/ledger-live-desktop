@@ -121,6 +121,9 @@ export type SettingsState = {
     },
   },
   starredMarketCoins: string[],
+  platformAppsLastOpened: {
+    [platformAppName: string]: number,
+  },
 };
 
 const defaultsForCurrency: Currency => CurrencySettings = crypto => {
@@ -186,6 +189,7 @@ const INITIAL_STATE: SettingsState = {
     KYC: {},
   },
   starredMarketCoins: [],
+  platformAppsLastOpened: {},
 };
 
 const pairHash = (from, to) => `${from.ticker}_${to.ticker}`;
@@ -328,6 +332,13 @@ const handlers: Object = {
   REMOVE_STARRED_MARKET_COINS: (state: SettingsState, { payload }) => ({
     ...state,
     starredMarketCoins: state.starredMarketCoins.filter(id => id !== payload),
+  }),
+  SET_PLATFORM_APP_LAST_OPENED: (state: SettingsState, { payload }) => ({
+    ...state,
+    platformAppsLastOpened: {
+      ...(state.platformAppsLastOpened || {}),
+      [payload.platformAppName]: payload.timestamp,
+    },
   }),
 };
 
@@ -506,5 +517,8 @@ export const exportSettingsSelector: OutputSelector<State, void, *> = createSele
 );
 
 export const starredMarketCoinsSelector = (state: State) => state.settings.starredMarketCoins;
+
+export const platformAppsLastOpenedSelector = (state: State) =>
+  state.settings.platformAppsLastOpened;
 
 export default handleActions(handlers, INITIAL_STATE);
